@@ -1,8 +1,10 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
 	"net/http"
+	"os"
+
+	"github.com/gorilla/mux"
 )
 
 func middleware(w http.ResponseWriter, r *http.Request) (newW http.ResponseWriter, newR *http.Request) {
@@ -11,14 +13,15 @@ func middleware(w http.ResponseWriter, r *http.Request) (newW http.ResponseWrite
 		http.Redirect(w, r, "https://twitter.com/YOUR_TWITTER_HANDLER", 302)
 		return
 	}
-	//w.Header().Set("X-Hacker", "Hi.")
+	// w.Header().Set("X-Hacker", "Hi.")
 	return
 }
 
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", homeHandler)
+	r.HandleFunc("/json", homeHandlerJSON)
 	r.HandleFunc("/p/{page}", pageHandler)
 	r.PathPrefix("/static/").Handler(http.FileServer(http.Dir(".")))
-	http.ListenAndServe(":8080", r)
+	http.ListenAndServe(":"+os.Getenv("PORT"), r)
 }

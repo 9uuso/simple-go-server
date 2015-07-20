@@ -1,25 +1,33 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
-	"log"
 	"net/http"
-	"strings"
+
+	"github.com/gorilla/mux"
 )
 
+type post struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	Created int    `json:"created"`
+}
+
 func homeHandler(w http.ResponseWriter, r *http.Request) {
+	p := post{"my blog post", "<b>content</b> is fagget", 1600000}
 	middleware(w, r)
-	parseLayout(w, r, "index", "Homepage")
+	HTML(w, r, "index", p)
+}
+
+func homeHandlerJSON(w http.ResponseWriter, r *http.Request) {
+	p := post{"my blog post", "content is fagget", 1600000}
+	middleware(w, r)
+	JSON(w, r, p)
 }
 
 func pageHandler(w http.ResponseWriter, r *http.Request) {
+	p := post{"my blog post", "content is fagget", 1600000}
 	middleware(w, r)
 	vars := mux.Vars(r)
 	filename := vars["page"]
-	parseLayout(w, r, filename, strings.Title(filename))
-}
-
-func error500(w http.ResponseWriter, r *http.Request, err error) {
-	http.Error(w, "Server went nuts. Please try again later.", 500)
-	log.Fatal(err)
+	HTML(w, r, filename, p)
 }
