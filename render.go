@@ -22,7 +22,7 @@ var templates = *template.Must(template.New("layout").Funcs(helpers).ParseGlob("
 
 type content struct {
 	Page     template.HTML
-	Data     post
+	Data     interface{}
 	LoggedIn bool
 }
 
@@ -40,7 +40,7 @@ func parseTemplate(filename string, data interface{}) (out []byte, error error) 
 	return nil, errors.New(fmt.Sprintf("template %s not found", filename))
 }
 
-func JSON(w http.ResponseWriter, r *http.Request, data post) {
+func JSON(w http.ResponseWriter, r *http.Request, data interface{}) {
 	d, err := json.Marshal(data)
 	if err != nil {
 		log.Println(err)
@@ -54,7 +54,7 @@ func JSON(w http.ResponseWriter, r *http.Request, data post) {
 	}
 }
 
-func HTML(w http.ResponseWriter, r *http.Request, filename string, data post) {
+func HTML(w http.ResponseWriter, r *http.Request, filename string, data interface{}) {
 	var buf bytes.Buffer
 	page, err := parseTemplate(filename, data)
 	if err != nil {
